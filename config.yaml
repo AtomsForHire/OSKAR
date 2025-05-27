@@ -17,7 +17,9 @@ run_settings:
 executables:
   oskar_sim_beam_pattern: "oskar_sim_beam_pattern"
   oskar_sim_interferometer: "oskar_sim_interferometer"
-  hyperdrive: "hyperdrive"
+  hyperdrive: "hyperdrive di-calibrate"
+  hyperdrive_plot: "hyperdrive solutions-plot"
+  hyperdrive_apply: "hyperdrive solutions-apply"
   wsclean: "wsclean"
 
 # === Output Configuration ===

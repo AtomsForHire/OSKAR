@@ -401,6 +401,167 @@ def run_calibrate(
             pass  # Final attempt to log, if it fails, not much else to do
 
 
+def run_plot(
+    executable_path: str,
+    hyperdrive_cfg: dict,
+    global_output_cfg: dict,
+    cwd_path: Path,
+    is_dry_run: bool,
+) -> bool:
+    log_file_path = (
+        cwd_path / "run.log"
+    )  # Log file will be in the specific run's directory
+    command = [
+        executable_path,
+        f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
+    ]
+    shell_like_command_display = f"{shlex.quote(executable_path)} {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}"
+
+    try:
+        with open(log_file_path, "a") as log_f:
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_f.write(
+                f"Command to be executed in CWD: {shell_like_command_display}\n\n"
+            )
+
+            if is_dry_run:
+                dry_run_msg = f"    [DRY RUN] Would execute: {shell_like_command_display} (from CWD: {cwd_path})"
+                print(dry_run_msg)
+                log_f.write("[DRY RUN] Command not executed.\n")
+                log_f.write("--- Dry Run Concluded ---\n\n")
+                return True
+
+            print(f"    Executing Hyperdrive plot ...")
+            process = subprocess.run(
+                command,
+                cwd=str(cwd_path),
+                check=False,  # Check returncode manually to log output regardless
+                capture_output=True,
+                text=True,
+            )
+
+            log_f.write(f"Exit Code: {process.returncode}\n\n")
+
+            log_f.write("--- Stdout ---\n")
+            log_f.write(process.stdout if process.stdout.strip() else "<No stdout>\n")
+            log_f.write("\n--- Stderr ---\n")
+            log_f.write(process.stderr if process.stderr.strip() else "<No stderr>\n")
+
+            if process.returncode == 0:
+                success_msg = "    Hyperdrive plot finished successfully."
+                print(success_msg)
+                log_f.write("\n--- Hyperdrive plot Successful ---\n")
+                if process.stdout.strip():
+                    print(f"      (stdout logged to {log_file_path})")
+                if process.stderr.strip():
+                    print(f"      (stderr logged to {log_file_path})")
+                return True
+            else:
+                error_msg_console = f"    ERROR: Hyperdrive plot failed with exit code {process.returncode}."
+                print(error_msg_console)
+                log_f.write(
+                    f"\n!!! ERROR: Hyperdrive plot Failed (Exit Code: {process.returncode}) !!!\n"
+                )
+                if process.stdout.strip():
+                    print("    Stdout from error:")
+                    print(process.stdout)
+                if process.stderr.strip():
+                    print("    Stderr from error:")
+                    print(process.stderr)
+                return False
+
+    finally:
+        try:
+            with open(log_file_path, "a") as log_f_final:
+                final_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                log_f_final.write(
+                    f"--- Logging for this Hyperdrive plot attempt concluded at {final_time} ---\n\n"
+                )
+        except Exception:  # pylint: disable=broad-except
+            pass  # Final attempt to log, if it fails, not much else to do
+
+
+def run_apply(
+    executable_path: str,
+    hyperdrive_cfg: dict,
+    global_output_cfg: dict,
+    cwd_path: Path,
+    is_dry_run: bool,
+) -> bool:
+    log_file_path = (
+        cwd_path / "run.log"
+    )  # Log file will be in the specific run's directory
+    command = [
+        executable_path,
+        f"-d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
+        f"-s {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
+    ]
+    shell_like_command_display = f"{shlex.quote(executable_path)} -d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')} -s {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}"
+
+    try:
+        with open(log_file_path, "a") as log_f:
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_f.write(
+                f"Command to be executed in CWD: {shell_like_command_display}\n\n"
+            )
+
+            if is_dry_run:
+                dry_run_msg = f"    [DRY RUN] Would execute: {shell_like_command_display} (from CWD: {cwd_path})"
+                print(dry_run_msg)
+                log_f.write("[DRY RUN] Command not executed.\n")
+                log_f.write("--- Dry Run Concluded ---\n\n")
+                return True
+
+            print(f"    Executing Hyperdrive plot ...")
+            process = subprocess.run(
+                command,
+                cwd=str(cwd_path),
+                check=False,  # Check returncode manually to log output regardless
+                capture_output=True,
+                text=True,
+            )
+
+            log_f.write(f"Exit Code: {process.returncode}\n\n")
+
+            log_f.write("--- Stdout ---\n")
+            log_f.write(process.stdout if process.stdout.strip() else "<No stdout>\n")
+            log_f.write("\n--- Stderr ---\n")
+            log_f.write(process.stderr if process.stderr.strip() else "<No stderr>\n")
+
+            if process.returncode == 0:
+                success_msg = "    Hyperdrive apply finished successfully."
+                print(success_msg)
+                log_f.write("\n--- Hyperdrive apply Successful ---\n")
+                if process.stdout.strip():
+                    print(f"      (stdout logged to {log_file_path})")
+                if process.stderr.strip():
+                    print(f"      (stderr logged to {log_file_path})")
+                return True
+            else:
+                error_msg_console = f"    ERROR: Hyperdrive apply failed with exit code {process.returncode}."
+                print(error_msg_console)
+                log_f.write(
+                    f"\n!!! ERROR: Hyperdrive apply Failed (Exit Code: {process.returncode}) !!!\n"
+                )
+                if process.stdout.strip():
+                    print("    Stdout from error:")
+                    print(process.stdout)
+                if process.stderr.strip():
+                    print("    Stderr from error:")
+                    print(process.stderr)
+                return False
+
+    finally:
+        try:
+            with open(log_file_path, "a") as log_f_final:
+                final_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                log_f_final.write(
+                    f"--- Logging for this Hyperdrive apply attempt concluded at {final_time} ---\n\n"
+                )
+        except Exception:  # pylint: disable=broad-except
+            pass  # Final attempt to log, if it fails, not much else to do
+
+
 def _flatten_settings_for_configparser(settings_dict, prefix=""):
     """
     Recursively flattens a nested dictionary into OSKAR-style keys
@@ -941,13 +1102,36 @@ def main(config_file_path):
                         print(f"    Successfully finished OSKAR sim")
 
                 if run_settings.get("run_hyperdrive"):
-                    run_calibrate(
-                        executables_cfg.get("hyperdrive", "hyperdrive"),
+                    success = run_calibrate(
+                        executables_cfg.get("hyperdrive", "hyperdrive di-calibrate"),
                         hyperdrive_cfg,
                         output_cfg,
                         current_run_output_dir,
                         run_settings.get("dry_run", False),
                     )
+
+                    if success and not run_settings.get("dry_run", False):
+                        print(f"    Successfully finished Hyperdrive di-calibrate")
+                        run_plot(
+                            executables_cfg.get(
+                                "hyperdrive_plot", "hyperdrive solutions-plot"
+                            ),
+                            hyperdrive_cfg,
+                            output_cfg,
+                            current_run_output_dir,
+                            run_settings.get("dry_run", False),
+                        )
+
+                        run_apply(
+                            executables_cfg.get(
+                                "hyperdrive_apply", "hyperdrive solutions-apply"
+                            ),
+                            hyperdrive_cfg,
+                            output_cfg,
+                            current_run_output_dir,
+                            run_settings.get("dry_run", False),
+                        )
+
     print(
         f"\nGenerated configuration for {run_counter} runs in base directory: {base_output_dir.resolve()}"
     )
