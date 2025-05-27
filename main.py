@@ -431,7 +431,7 @@ def write_ini_file_with_configparser(ini_data_dict, output_path):
     ini_data_dict: A dictionary where top-level keys are section names and
                    their values are (potentially nested) dictionaries of settings.
     """
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(space_around_delimiters=False)
     config.optionxform = str  # Preserve key case (OSKAR keys are case-sensitive)
 
     for section_name, settings_dict in ini_data_dict.items():
