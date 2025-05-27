@@ -1,0 +1,143 @@
+# ----------------------------------------------------------------------
+# Master Configuration for OSKAR & WSClean Simulations (Python Workflow)
+# ----------------------------------------------------------------------
+
+# === Global Control Flags ===
+run_settings:
+  dry_run: true
+  include_telescope_errors: true # Master switch for applying telescope errors from phase_centre_configs
+  # Step execution flags for the entire workflow run
+  run_beam_sim: true
+  run_interf_sim: true
+  run_hyperdrive: true
+  run_wsclean: false
+
+# === Executable Paths (optional, if not in system PATH) ===
+# If these are in your PATH, you can leave them as just the command name.
+executables:
+  oskar_sim_beam_pattern: "oskar_sim_beam_pattern"
+  oskar_sim_interferometer: "oskar_sim_interferometer"
+  hyperdrive: "hyperdrive"
+  wsclean: "wsclean"
+
+# === Output Configuration ===
+output_config:
+  base_output_directory: "/home/sciops/eric.jong/OSKAR_sims/" # Base for all generated run-specific folders
+  # Python's string.format() will be used for this pattern.
+  # Available keys: {sky_name_no_ext}, {tel_name}, {error_suffix}, {pc_id}
+  images_folder_pattern: "{sky_name_no_ext}_{tel_name}{error_suffix}_{pc_id}"
+  
+  # Basenames for generated files within each run-specific images_folder
+  beam_ini_filename: "oskar_sim_beam_pattern.ini"
+  interf_ini_filename: "oskar_sim_interferometer.ini"
+  beam_root_path_base: "ska_beam_pattern"      # For OSKAR beam output (OSKAR appends to this)
+  interf_ms_base_filename: "sim.ms"          # For OSKAR MS output
+  wsclean_image_base_name: "wsclean_image" # For WSClean output (WSClean appends to this)
+
+# === Iterable Parameters (Fields to define different runs) ===
+# The Python script will create a Cartesian product of these lists.
+iteration_parameters:
+  telescope_configs:
+    - name: "AA2" # Used as {tel_name} in images_folder_pattern
+      # This is the value for oskar_ini: [telescope] input_directory
+      oskar_input_directory: "telescope_model_AA2" # Relative to project root or an absolute path
+      # You could add other telescope-specific OSKAR parameters here if they override defaults
+      # Example: mean_gain_override: 0.99 
+    # - name: "AA0.5"
+    #   oskar_input_directory: "telescope_model_AA0.5"
+
+  sky_model_configs:
+    - filename: "sources_with_diffuse.osm" # Used for {sky_name_no_ext}
+      # You could add sky-model-specific OSKAR parameters here
+      # Example: filter_radius_deg_override: "85.0"
+  # - filename: "another_sky_model.sky"
+  sky_models_base_dir: "./sky_models/" # Base directory for sky model files (relative to project root or absolute)
+
+  phase_centre_configs:
+    - id: "EoR0" # Used for {pc_id} in images_folder_pattern
+      ra_deg: "0.0"
+      dec_deg: "-27.0"
+      start_time_utc: "2017-11-09 12:59:26.000"
+      # Telescope error STDs for this PC config.
+      # These are applied ONLY IF global run_settings.include_telescope_errors is true.
+      gain_error_std: "0.0015057"
+      phase_error_std: "0.0015057"
+    # - id: "pcOthT1e0"
+    #   ra_deg: "10.0"
+    #   dec_deg: "-30.0"
+    #   start_time_utc: "2017-11-10 08:30:00.000"
+    #   gain_error_std: "0.0" 
+    #   phase_error_std: "0.0"
+
+# === Default OSKAR INI Settings ===
+# These are the base settings. The Python script will:
+# 1. Take these defaults.
+# 2. Override with values from iteration_parameters (e.g., phase_centre_ra_deg, telescope_input_directory).
+# 3. Override with global settings (e.g., use_gpus).
+# 4. Construct dynamic paths (e.g., ms_filename, beam_root_path).
+#
+# The structure (section names like 'General', 'simulator') directly maps to OSKAR INI sections.
+oskar_ini_defaults:
+  General:
+    # 'app' will be set by Python to 'oskar_sim_beam_pattern' or 'oskar_sim_interferometer'
+    version: "2.9.6" # Example default
+  simulator:
+    use_gpus: true
+    double_precision: true
+  observation:
+    # Values for ra, dec, start_time_utc will come from phase_centre_configs
+    start_frequency_hz: "170.24e6"
+    frequency_inc_hz: "80e3"
+    num_channels: 375
+    length: "00:02:00.0" # Python script should map this to 'length_obs' if needed for consistency
+    num_time_steps: 1
+  telescope:
+    # 'input_directory' will come from telescope_configs
+    aperture_array:
+      element_pattern:
+        enable_numerical: false
+      array_pattern:
+        element:
+          x_gain: "1.0" # Default mean_gain
+          y_gain: "1.0" # Default mean_gain
+          x_phase_error_fixed_deg: "0.0" # Default mean_phase
+          y_phase_error_fixed_deg: "0.0" # Default mean_phase
+          # x_gain_error_time etc. will be set based on phase_centre_configs & run_settings.include_telescope_errors
+  
+  # --- Specific modules/sections for different OSKAR apps ---
+  # The Python script will pick the relevant module and merge its sections into the INI.
+  beam_pattern_module: # Settings specific to oskar_sim_beam_pattern
+    beam_pattern: # This is the INI section name
+      beam_image:
+        fov_deg: "180.0"
+      # root_path: will be constructed dynamically by Python from output_config.beam_root_path_base
+      station_outputs:
+        fits_image:
+          amp: true
+          
+  interferometer_module: # Settings specific to oskar_sim_interferometer
+    interferometer: # This is the INI section name
+      # ms_filename: will be constructed dynamically by Python from output_config.interf_ms_base_filename
+      channel_bandwidth_hz: "80e3"
+      time_average_sec: 8 # Integer
+    sky: # This is an INI section name
+      oskar_sky_model:
+        # file: will be constructed dynamically by Python from sky_model_configs
+        filter:
+          radius_outer_deg: "90.0"
+
+# === WSClean Settings (not for OSKAR INI, but for the WSClean command) ===
+wsclean_settings:
+  image_size: 4096 # Integer
+  scale: "1.5asec"
+  niter: 10000 # Integer
+  # Add other fixed wsclean arguments here, e.g.
+  # auto_threshold: 3 
+  # no_negative: true
+
+# === Hyperdrive settings ===
+hyperdrive_settings:
+  srclist: "/home/sciops/eric.jong/srclist/srclist_pumav3_EoR0LoBES_EoR1pietro_CenA-GP_2023-11-07.fits"
+  num_sources: 8000
+  cal_output: "calibrated.ms"
+  sol_output: "hyperdrive_solutions.fits"
