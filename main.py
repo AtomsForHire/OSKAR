@@ -431,7 +431,7 @@ def write_ini_file_with_configparser(ini_data_dict, output_path):
     ini_data_dict: A dictionary where top-level keys are section names and
                    their values are (potentially nested) dictionaries of settings.
     """
-    config = configparser.ConfigParser(space_around_delimiters=False)
+    config = configparser.ConfigParser()
     config.optionxform = str  # Preserve key case (OSKAR keys are case-sensitive)
 
     for section_name, settings_dict in ini_data_dict.items():
@@ -450,7 +450,7 @@ def write_ini_file_with_configparser(ini_data_dict, output_path):
         config[section_name] = _flatten_settings_for_configparser(settings_dict)
 
     with open(output_path, "w") as configfile:
-        config.write(configfile)
+        config.write(configfile, space_around_delimiters=False)
 
 
 def generate_beam_ini_data(
