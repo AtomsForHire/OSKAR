@@ -305,6 +305,7 @@ def run_calibrate(
     )  # Log file will be in the specific run's directory
     command = [
         executable_path,
+        "di-calibrate",
         f"-d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
         f"--source-list {hyperdrive_cfg.get('srclist', None)}",
         f"-o {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
@@ -413,6 +414,7 @@ def run_plot(
     )  # Log file will be in the specific run's directory
     command = [
         executable_path,
+        "solutions-plot",
         f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]
     shell_like_command_display = f"{shlex.quote(executable_path)} {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}"
@@ -493,6 +495,7 @@ def run_apply(
     )  # Log file will be in the specific run's directory
     command = [
         executable_path,
+        "solutions-apply",
         f"-d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
         f"-s {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]
@@ -1103,7 +1106,7 @@ def main(config_file_path):
 
                 if run_settings.get("run_hyperdrive"):
                     success = run_calibrate(
-                        executables_cfg.get("hyperdrive", "hyperdrive di-calibrate"),
+                        executables_cfg.get("hyperdrive", "hyperdrive"),
                         hyperdrive_cfg,
                         output_cfg,
                         current_run_output_dir,
@@ -1113,9 +1116,7 @@ def main(config_file_path):
                     if success and not run_settings.get("dry_run", False):
                         print(f"    Successfully finished Hyperdrive di-calibrate")
                         run_plot(
-                            executables_cfg.get(
-                                "hyperdrive_plot", "hyperdrive solutions-plot"
-                            ),
+                            executables_cfg.get("hyperdrive", "hyperdrive"),
                             hyperdrive_cfg,
                             output_cfg,
                             current_run_output_dir,
@@ -1123,9 +1124,7 @@ def main(config_file_path):
                         )
 
                         run_apply(
-                            executables_cfg.get(
-                                "hyperdrive_apply", "hyperdrive solutions-apply"
-                            ),
+                            executables_cfg.get("hyperdrive", "hyperdrive"),
                             hyperdrive_cfg,
                             output_cfg,
                             current_run_output_dir,
