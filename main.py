@@ -310,6 +310,8 @@ def run_calibrate(
         f"{global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
         "-s",
         f"{hyperdrive_cfg.get('srclist', None)}",
+        "--veto-threshold",
+        f"{hyperdrive_cfg.get('veto_threshold', '0.01')}",
         "-o",
         f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]

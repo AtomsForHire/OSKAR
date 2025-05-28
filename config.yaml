@@ -139,6 +139,6 @@ wsclean_settings:
 # === Hyperdrive settings ===
 hyperdrive_settings:
   srclist: "/home/sciops/eric.jong/srclists/srclist_pumav3_EoR0LoBES_EoR1pietro_CenA-GP_2023-11-07.fits"
-  num_sources: 8000
+  veto_threshold: "0.001"
   cal_output: "calibrated.ms"
   sol_output: "hyperdrive_solutions.fits"
