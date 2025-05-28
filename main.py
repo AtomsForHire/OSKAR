@@ -306,9 +306,12 @@ def run_calibrate(
     command = [
         executable_path,
         "di-calibrate",
-        f"-d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
-        f"--source-list {hyperdrive_cfg.get('srclist', None)}",
-        f"-o {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
+        "-d",
+        f"{global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
+        "--source-list",
+        f"{hyperdrive_cfg.get('srclist', None)}",
+        "-o",
+        f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]
     shell_like_command_display = f"{shlex.quote(executable_path)} -d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')} --source-list {hyperdrive_cfg.get('srclist', None)} -o {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}"
 
@@ -496,8 +499,10 @@ def run_apply(
     command = [
         executable_path,
         "solutions-apply",
-        f"-d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
-        f"-s {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
+        "-d",
+        f"{global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
+        "-s",
+        f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]
     shell_like_command_display = f"{shlex.quote(executable_path)} -d {global_output_cfg.get('interf_ms_base_filename', 'sim.ms')} -s {hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}"
 
