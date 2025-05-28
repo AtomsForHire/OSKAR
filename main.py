@@ -310,8 +310,6 @@ def run_calibrate(
         f"{global_output_cfg.get('interf_ms_base_filename', 'sim.ms')}",
         "-s",
         f"{hyperdrive_cfg.get('srclist', None)}",
-        "-n",
-        f"{hyperdrive_cfg.get('num_sources', 8000)}",
         "-o",
         f"{hyperdrive_cfg.get('sol_output', 'hyperdrive_solutions.fits')}",
     ]
