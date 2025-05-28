@@ -38,20 +38,21 @@ output_config:
 # The Python script will create a Cartesian product of these lists.
 iteration_parameters:
   telescope_configs:
-    - name: "AA2" # Used as {tel_name} in images_folder_pattern
-      # This is the value for oskar_ini: [telescope] input_directory
-      oskar_input_directory: "telescope_model_AA2" # Relative to project root or an absolute path
-      # You could add other telescope-specific OSKAR parameters here if they override defaults
-      # Example: mean_gain_override: 0.99 
-    # - name: "AA0.5"
-    #   oskar_input_directory: "telescope_model_AA0.5"
+    - name: "AA0.5"
+      oskar_input_directory: "telescope_model_AA0.5"
+    # - name: "AA1"
+    #   oskar_input_directory: "telescope_model_AA1"
+    # - name: "AA2" # Used as {tel_name} in images_folder_pattern
+    #   oskar_input_directory: "telescope_model_AA2" # Relative to project root or an absolute path
+    # - name: "AAstar"
+    #   oskar_input_directory: "telescope_model_AAstar"
 
   sky_model_configs:
-    - filename: "sources_with_diffuse.osm" # Used for {sky_name_no_ext}
+    - filename: "sources_only.osm" # Used for {sky_name_no_ext}
       # You could add sky-model-specific OSKAR parameters here
       # Example: filter_radius_deg_override: "85.0"
   # - filename: "another_sky_model.sky"
-  sky_models_base_dir: "./sky_models/" # Base directory for sky model files (relative to project root or absolute)
+  sky_models_base_dir: "/home/sciops/eric.jong/OSKAR/sky_models/" # Base directory for sky model files (relative to project root or absolute)
 
   phase_centre_configs:
     - id: "EoR0" # Used for {pc_id} in images_folder_pattern
@@ -62,9 +63,9 @@ iteration_parameters:
       # These are applied ONLY IF global run_settings.include_telescope_errors is true.
       gain_error_std: "0.0015057"
       phase_error_std: "0.0015057"
-    # - id: "pcOthT1e0"
-    #   ra_deg: "10.0"
-    #   dec_deg: "-30.0"
+    # - id: "EoR1"
+    #   ra_deg: "60.0"
+    #   dec_deg: "-27.0"
     #   start_time_utc: "2017-11-10 08:30:00.000"
     #   gain_error_std: "0.0" 
     #   phase_error_std: "0.0"
