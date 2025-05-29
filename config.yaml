@@ -46,23 +46,31 @@ iteration_parameters:
     #   oskar_input_directory: "telescope_model_AA2" # Relative to project root or an absolute path
     # - name: "AAstar"
     #   oskar_input_directory: "telescope_model_AAstar"
+    telescope_models_base_dir: "."
 
   sky_model_configs:
-    - filename: "sources_only.osm" # Used for {sky_name_no_ext}
-      # You could add sky-model-specific OSKAR parameters here
-      # Example: filter_radius_deg_override: "85.0"
+    # - filename: "sources_only.osm" # Used for {sky_name_no_ext}
+    #   # You could add sky-model-specific OSKAR parameters here
+    #   # Example: filter_radius_deg_override: "85.0"
+    - filename: "single.osm"
   # - filename: "another_sky_model.sky"
   sky_models_base_dir: "/home/sciops/eric.jong/OSKAR/sky_models/" # Base directory for sky model files (relative to project root or absolute)
 
   phase_centre_configs:
-    - id: "EoR0" # Used for {pc_id} in images_folder_pattern
+    # - id: "EoR0" # Used for {pc_id} in images_folder_pattern
+    #   ra_deg: "0.0"
+    #   dec_deg: "-27.0"
+    #   start_time_utc: "2017-11-09 12:59:26.000"
+    #   # Telescope error STDs for this PC config.
+    #   # These are applied ONLY IF global run_settings.include_telescope_errors is true.
+    #   gain_error_std: "0.0"
+    #   phase_error_std: "0.0"
+    - id: "Single"
       ra_deg: "0.0"
-      dec_deg: "-27.0"
-      start_time_utc: "2017-11-09 12:59:26.000"
-      # Telescope error STDs for this PC config.
-      # These are applied ONLY IF global run_settings.include_telescope_errors is true.
-      gain_error_std: "0.0015057"
-      phase_error_std: "0.0015057"
+      dec_deg: "-26.824722079999994"
+      start_time_utc: "2025-11-09 12:57:58.122"
+      gain_error_std: "0.0"
+      phase_error_std: "0.0"
     # - id: "EoR1"
     #   ra_deg: "60.0"
     #   dec_deg: "-27.0"
